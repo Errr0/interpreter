@@ -1,0 +1,2 @@
+g++ -o2 -Wall main.cpp -o main.exe
+.\main.exe code.txt
