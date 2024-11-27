@@ -3,24 +3,49 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <regex>
+
+enum TokenType {
+    END = 0
+};
+
+class Token{
+    std::string value;
+    enum TokenType type;
+    Token(std::string value = "",enum TokenType type = END){
+        this -> value = value;
+        this -> type = type;
+    }
+};
+
 
 void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
-    int start = 0, end = str.find(' ');
+    size_t start = 0, end = str.find(symbol);//int with different name
     while (end != std::string::npos) {
+        if(start != end)
         arr.push_back(str.substr(start, end - start));
         start = end + 1; // Move past the space
         end = str.find(symbol, start);
     }
+    if(str.substr(start) != " " && str.substr(start) != "")
     arr.push_back(str.substr(start)); // Add the last word
 }
 
-void tokenize(std::string str, std::vector<std::string> &tokens){
-    std::vector<std::string> arr;
-    split(str, arr);
-    
+void replace(std::string &str, std::string from, std::string to) {
+    str = std::regex_replace(str, std::regex(from), to);
 }
 
-bool readfile(std::string filename, std::vector<std::string> &arr){
+void parse(std::string str, std::vector<std::string> &tokens){
+    std::vector<std::string> words;
+    replace(str, "\n", " ");
+    split(str, words);
+    for (std::string w : words) {
+        std::cout << w << std::endl;
+            //tokens.push_back("END");
+    }
+}
+
+bool readfile(std::string filename, std::vector<std::string> &statements){
     std::fstream file(filename, std::ios::in);
     if (!file) {
         std::cerr << "Error opening file!" << std::endl;
@@ -30,11 +55,16 @@ bool readfile(std::string filename, std::vector<std::string> &arr){
     buffer << file.rdbuf();  // Read the entire file buffer into the stream
     std::string content = buffer.str();
     file.close();
-    std::cout << content << std::endl;//debug
-    split(content, arr, ';');
-    for (const auto& w : arr) {//debug
-        std::cout << w << std::endl;
+    //std::cout << content << std::endl;//debug
+    std::vector<std::string> tokens;
+    split(content, statements, ';');
+
+    for (auto& w : statements) {//debug
+        parse(w, tokens);
+
+        //std::cout << " statement: "<< w << std::endl;
     }
+    return 1;
 }
 
 int main(int argc, char* argv[]){

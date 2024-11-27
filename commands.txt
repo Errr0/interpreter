@@ -1,2 +1,2 @@
-g++ -o2 -Wall main.cpp -o main.exe
-.\main.exe code.txt
+g++ -o2 -Wall src\main.cpp -o build\main.exe
+.\build\main.exe code.txt
