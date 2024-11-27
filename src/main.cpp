@@ -18,7 +18,6 @@ class Token{
     }
 };
 
-
 void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
     size_t start = 0, end = str.find(symbol);//int with different name
     while (end != std::string::npos) {
@@ -35,7 +34,7 @@ void replace(std::string &str, std::string from, std::string to) {
     str = std::regex_replace(str, std::regex(from), to);
 }
 
-void parse(std::string str, std::vector<std::string> &tokens){
+void parse(std::string str, std::vector<Token> &tokens){
     std::vector<std::string> words;
     replace(str, "\n", " ");
     split(str, words);
@@ -56,7 +55,7 @@ bool readfile(std::string filename, std::vector<std::string> &statements){
     std::string content = buffer.str();
     file.close();
     //std::cout << content << std::endl;//debug
-    std::vector<std::string> tokens;
+    std::vector<Token> tokens;
     split(content, statements, ';');
 
     for (auto& w : statements) {//debug
