@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <regex>
 
 enum TokenType {
     END = 0
@@ -20,6 +21,7 @@ class Token{
 
 
 void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
+    size_t start = 0, end = str.find(symbol);//int with different name
     size_t start = 0, end = str.find(symbol);//int with different name
     while (end != std::string::npos) {
         if(start != end)
@@ -46,6 +48,7 @@ void parse(std::string str, std::vector<std::string> &tokens){
 }
 
 bool readfile(std::string filename, std::vector<std::string> &statements){
+bool readfile(std::string filename, std::vector<std::string> &statements){
     std::fstream file(filename, std::ios::in);
     if (!file) {
         std::cerr << "Error opening file!" << std::endl;
@@ -56,6 +59,11 @@ bool readfile(std::string filename, std::vector<std::string> &statements){
     std::string content = buffer.str();
     file.close();
     //std::cout << content << std::endl;//debug
+    split(content, statements, ';');
+    for (auto& w : statements) {//debug
+        replace(w, "\n", " ");
+        std::cout << w << std::endl;
+    //std::cout << content << std::endl;//debug
     std::vector<std::string> tokens;
     split(content, statements, ';');
 
@@ -64,6 +72,7 @@ bool readfile(std::string filename, std::vector<std::string> &statements){
 
         //std::cout << " statement: "<< w << std::endl;
     }
+    return 1;
     return 1;
 }
 
