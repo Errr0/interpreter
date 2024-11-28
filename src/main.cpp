@@ -47,7 +47,9 @@ enum TokenType {
     COMMA,
     COLON,
     DOT,
-    BACKSLASH
+    BACKSLASH,
+    DOUBLESLASH,
+    HASHTAG
 };
 
 std::map<std::string, TokenType> map = {
@@ -83,7 +85,9 @@ std::map<std::string, TokenType> map = {
     {",", COMMA},
     {":", COLON},
     {".", DOT},
-    {"\\", BACKSLASH}
+    {"\\", BACKSLASH},
+    {"//", DOUBLESLASH},
+    {"#", HASHTAG}
 };
 
 class Token{
@@ -125,7 +129,7 @@ void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
 }
 
 bool splitChunks(std::string str, std::vector<std::string> &arr) {
-    std::array<std::string, 32> symbols = {"==","!=","<=",">=","&&","||","+=","-=","*=","/=","","=","+","*","/","!","-","<",">","%","(",")","[","]","{","}","'","\"","?",",",":",".","\\","#"};
+    std::array<std::string, 34> symbols = {"==","!=","<=",">=","&&","||","+=","-=","*=","/=","//","=","+","*","/","!","-","<",">","%","(",")","[","]","{","}","'","\"","?",",",":",".","\\","#"};
     size_t start, end;
     bool change = false;
     for (std::string s : symbols) {
