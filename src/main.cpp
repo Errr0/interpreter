@@ -15,6 +15,7 @@ enum TokenType {
     MINUS,
     ASTERISK,
     SLASH,
+    MODULO,
     MULTIPLY,
     DIVIDE,
     ADD,
@@ -29,8 +30,24 @@ enum TokenType {
     LESSEQUAL,
     GREATERTHAN,
     GREATEREQUAL,
-
-    INT
+    //
+    INT,
+    FLOAT,
+    IDENTIFIER,
+    //
+    BRACKETOPEN,
+    BRACKETCLOSE,
+    SQUAREBRACKETOPEN,
+    SQUAREBRACKETCLOSE,
+    CURLYBRACKETOPEN,
+    CURLYBRACKETCLOSE,
+    APOSTROPHE,
+    QUOTATION,
+    QUESTIONMARK,
+    COMMA,
+    COLON,
+    DOT,
+    BACKSLASH
 };
 
 std::map<std::string, TokenType> map = {
@@ -39,6 +56,7 @@ std::map<std::string, TokenType> map = {
     {"-", MINUS},
     {"*", ASTERISK},
     {"/", SLASH},
+    {"%", MODULO},
     {"+=", ADD},
     {"-=", SUBTRACT},
     {"*=", MULTIPLY},
@@ -52,7 +70,20 @@ std::map<std::string, TokenType> map = {
     {"<", LESSTHAN},
     {"<=", LESSEQUAL},
     {">", GREATERTHAN},
-    {">=", GREATEREQUAL},
+
+    {"(", BRACKETOPEN},
+    {")", BRACKETCLOSE},
+    {"[", SQUAREBRACKETOPEN},
+    {"]", SQUAREBRACKETCLOSE},
+    {"{", CURLYBRACKETOPEN},
+    {"}", CURLYBRACKETCLOSE},
+    {"'", APOSTROPHE},
+    {"\"", QUOTATION},
+    {"?", QUESTIONMARK},
+    {",", COMMA},
+    {":", COLON},
+    {".", DOT},
+    {"\\", BACKSLASH}
 };
 
 class Token{
@@ -64,6 +95,22 @@ class Token{
         this -> type = type;
     }
 };
+
+bool isInt(std::string str){
+    std::regex regex ("[-]?[0-9]+");
+    return std::regex_match(str, regex);
+}
+
+bool isFloat(std::string str) {
+    std::regex regex ("[-]?([0-9]+\\.[0-9]+|\\.[0-9]+)");
+    return std::regex_match(str, regex);
+}
+
+bool isIdentifier(std::string str) {
+    std::regex regex ("[_a-zA-Z][_a-zA-Z0-9]*");
+    return std::regex_match(str, regex);
+}
+
 
 void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
     size_t start = 0, end = str.find(symbol);//int with different name
@@ -78,7 +125,7 @@ void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
 }
 
 bool splitChunks(std::string str, std::vector<std::string> &arr) {
-    std::array<std::string, 3> symbols = {"+=","-=","="};
+    std::array<std::string, 32> symbols = {"==","!=","<=",">=","&&","||","+=","-=","*=","/=","","=","+","*","/","!","-","<",">","%","(",")","[","]","{","}","'","\"","?",",",":",".","\\","#"};
     size_t start, end;
     bool change = false;
     for (std::string s : symbols) {
@@ -113,15 +160,11 @@ void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
     for (std::string str : arr) {
         if(str.length()<=2){
             tokens.push_back(Token(str,map[str]));
-        } else if(1){
+        } else if(isIdentifier(str)){
             continue;
-        } else if(1){
+        } else if(isInt(str)){
             continue;
-        } else if(1){
-            continue;
-        } else if(1){
-            continue;
-        } else if(1){
+        } else if(isFloat(str)){
             continue;
         }
     }
