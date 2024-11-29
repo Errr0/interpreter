@@ -116,7 +116,6 @@ bool isIdentifier(std::string str) {
     return std::regex_match(str, regex);
 }
 
-
 void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
     size_t start = 0, end = str.find(symbol);//int with different name
     while (end != std::string::npos) {
@@ -129,13 +128,7 @@ void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
     arr.push_back(str.substr(start)); // Add the last word
 }
 
-bool isPartOfElement(std::string str, std::vector<std::string> arr){
-    return true;
-}
-
 bool splitChunks(std::string str, std::vector<std::string> &arr, int i) {
-    //std::cout << i<<"\n";
-    //if(i>10) return false;
     std::array<std::string, 34> symbols = {"==","!=","<=",">=","&&","||","+=","-=","*=","/=","//","=","+","*","/","!","-","<",">","%","(",")","[","]","{","}","'","\"","?",",",":",".","\\","#"};
     size_t start, end;
     bool change = false;
@@ -168,22 +161,18 @@ void replace(std::string &str, std::string from, std::string to) {
     str = std::regex_replace(str, std::regex(from), to);
 }
 
-void makeToken(std::string &str, std::vector<Token> &tokens){  
-}
-
 void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
     for (std::string str : arr) {
-        if(str.length()<=2){
-            tokens.push_back(Token(str,map[str]));
-        } else if(isIdentifier(str)){
-            continue;
+        if(isIdentifier(str)){
+            tokens.push_back(Token(str,IDENTIFIER));
         } else if(isInt(str)){
-            continue;
+            tokens.push_back(Token(str,INT));
         } else if(isFloat(str)){
-            continue;
+            tokens.push_back(Token(str,FLOAT));
+        } else if(str.length()<=2){
+            tokens.push_back(Token(str,map[str]));
         }
     }
-    //tokens.push_back(Token());
 }
 
 void parse(std::string &str, std::vector<Token> &tokens){
@@ -199,14 +188,11 @@ void parse(std::string &str, std::vector<Token> &tokens){
         }
         arr.push_back(";");
     }
-    //arr.push_back("");
     tokenize(arr, tokens);
-    //std::cout << "arr:\n";
-    for (std::string w : arr) {//debug
+    for (std::string w : arr) {
         std::cout <<"arr: |" << w <<"|" << std::endl;
-    }
-    
-}            //tokens.push_back("END");
+    } 
+}
 
 bool readfile(std::string filename, std::vector<std::string> &statements){
     std::fstream file(filename, std::ios::in);
@@ -221,10 +207,9 @@ bool readfile(std::string filename, std::vector<std::string> &statements){
     //std::cout << content << std::endl;//debug
     std::vector<Token> tokens;
     split(content, statements, ';');
-    
-    for (std::string& w : statements) {//debug
-        parse(w, tokens);
-        //std::cout << " statement: "<< w << std::endl;
+    for (std::string& statement : statements) {
+        parse(statement, tokens);
+        //std::cout << " statement: "<< statement << std::endl;
     }
     for (Token& w : tokens) {
         std::cout << " token: "<< w.type << " value: " << w.value << std::endl;
@@ -233,22 +218,12 @@ bool readfile(std::string filename, std::vector<std::string> &statements){
 }
 
 int main(int argc, char* argv[]){
-    //std::cout << "Number of arguments: " << argc << std::endl;
-    //for (int i = 0; i < argc; ++i) {std::cout << "Argument " << i << ": " << argv[i] << std::endl;}
     if(argc<2) {
         std::cerr << "Error no path argument!" << std::endl;
         return 1;
     }
     std::vector<std::string> statements;
     if(!readfile(argv[1], statements)) return 2;
-
-    //std::vector<std::string> tokens;
-    //std::getline(file, line);
-    //std::cout << line << "\n";
-    //split(line, tokens);
-    // Print the result
-
-
     return 0;
 }
 
