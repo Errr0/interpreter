@@ -163,3 +163,69 @@ int main() {
 
     return 0;
 }
+/*
+#include <iostream>
+#include <vector>
+#include <string>
+#include <array>
+#include <sstream>
+
+bool splitChunks(std::string str, std::vector<std::string>& arr) {
+    std::array<std::string, 34> symbols = {
+        "==", "!=", "<=", ">=", "&&", "||", "+=", "-=", "*=", "/=", "//", 
+        "=", "+", "*", "/", "!", "-", "<", ">", "%", "(", ")", "[", "]", 
+        "{", "}", "'", "\"", "?", ",", ":", ".", "\\", "#"
+    };
+
+    size_t start = 0, end = 0;
+    bool change = false;
+
+    while (start < str.size()) {
+        bool wasFound = false;
+        
+        // Try to find any symbol in the string from the current position
+        for (const std::string& s : symbols) {
+            end = str.find(s, start);
+            if (end == start) {  // If the symbol is found at the start
+                if (str.substr(start, s.length()) != " ") {  // Avoid empty spaces
+                    arr.push_back(s);  // Push the symbol as a token
+                    change = true;
+                }
+                start = end + s.length();  // Move start after the symbol
+                wasFound = false;
+                break;
+            }
+        }
+        
+        if (!wasFound) {
+            // If no symbol was found, it must be part of an operand (number or variable)
+            end = str.find_first_of(" \t\n", start);  // Find the next whitespace or end of string
+            if (end == std::string::npos) end = str.length();  // Until the end if no space found
+            
+            std::string token = str.substr(start, end - start);
+            if (!token.empty() && token != " ") {
+                arr.push_back(token);  // Push operand as a token
+                change = true;
+            }
+            start = end;  // Move the start index to the next position
+        }
+    }
+
+    return change;
+}
+
+int main() {
+    std::string expr = "a=9-3+10/2+8*2;a+=3*2%2;if(a==b)a=1";
+    std::vector<std::string> arr;
+
+    if (splitChunks(expr, arr)) {
+        std::cout << "Tokens: \n";
+        for (const std::string& token : arr) {
+            std::cout << "'" << token << "'\n";
+        }
+    } else {
+        std::cout << "No tokens found.\n";
+    }
+
+    return 0;
+}*/

@@ -53,6 +53,7 @@ enum TokenType {
 };
 
 std::map<std::string, TokenType> map = {
+    {";", END},
     {"=", ASSIGN},
     {"+", PLUS},
     {"-", MINUS},
@@ -94,7 +95,7 @@ class Token{
     public:
     std::string value;
     enum TokenType type;
-    Token(std::string value = "",enum TokenType type = END){
+    Token(std::string value = ";",enum TokenType type = END){
         this -> value = value;
         this -> type = type;
     }
@@ -128,27 +129,37 @@ void split(std::string str, std::vector<std::string> &arr, char symbol = ' ') {
     arr.push_back(str.substr(start)); // Add the last word
 }
 
-bool splitChunks(std::string str, std::vector<std::string> &arr) {
+bool isPartOfElement(std::string str, std::vector<std::string> arr){
+    return true;
+}
+
+bool splitChunks(std::string str, std::vector<std::string> &arr, int i) {
+    //std::cout << i<<"\n";
+    //if(i>10) return false;
     std::array<std::string, 34> symbols = {"==","!=","<=",">=","&&","||","+=","-=","*=","/=","//","=","+","*","/","!","-","<",">","%","(",")","[","]","{","}","'","\"","?",",",":",".","\\","#"};
     size_t start, end;
     bool change = false;
-    for (std::string s : symbols) {
+    std::vector<std::string> ignore;
+    for (std::string& s : symbols) {
         start = 0;
         end = str.find(s);
-        if(change) continue;
+        if(change){
+            break;
+        }
         while (end < std::string::npos) {
             if(start != end){
-                arr.push_back(str.substr(start, end - start));
+                splitChunks(str.substr(start, end - start), arr, i+1);
                 arr.push_back(str.substr(end - start, s.length()));
                 change = true;
             }
             start = end + (s.length()>0 ? s.length() : 1);
             end = str.find(s, start);
-            //std::cout << " | 1 | "<< end << " | " <<start<< " | "<< s <<" | "<<s.length()<<" | "<< (s.length()>0 ? s.length() : 1) << " | \n";
+            splitChunks(str.substr(start), arr, i+1);
+            break;
         }
-        if(str.substr(start) != " " && str.substr(start) != "" && change){
-            arr.push_back(str.substr(start));
-        } 
+    }
+    if(!change){
+        arr.push_back(str);
     }
     return change;
 }
@@ -172,7 +183,7 @@ void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
             continue;
         }
     }
-    tokens.push_back(Token());
+    //tokens.push_back(Token());
 }
 
 void parse(std::string &str, std::vector<Token> &tokens){
@@ -182,12 +193,15 @@ void parse(std::string &str, std::vector<Token> &tokens){
     std::vector<std::string> arr;
     for (std::string w : words) {
         //std::cout <<"words: |" << w <<"|" << std::endl;
-        if(!splitChunks(w, arr)){
+        if(!splitChunks(w, arr, 0)){
             arr.push_back(w);
+            std::cout << "add: " << w << "\n";
         }
+        arr.push_back(";");
     }
     //arr.push_back("");
     tokenize(arr, tokens);
+    //std::cout << "arr:\n";
     for (std::string w : arr) {//debug
         std::cout <<"arr: |" << w <<"|" << std::endl;
     }
@@ -237,3 +251,4 @@ int main(int argc, char* argv[]){
 
     return 0;
 }
+
