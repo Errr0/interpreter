@@ -79,7 +79,7 @@ std::map<std::string, TokenType> map = {
     {"#", HASHTAG}
 };
 
-std::array<std::string, 34> symbols = {
+std::array<std::string, 33> symbols = {
     "==",
     "!=",
     "<=",
@@ -153,9 +153,28 @@ bool splitChunks(std::string str, std::vector<std::string> &arr, int i) {
     return change;
 }
 
-void deconstructStatement(std::string &str, std::vector<std::string> arr){
+void deconstructStatement(std::string &str, std::vector<std::string> &arr){
+    //arr.push_back(str);
+    //bool change = false;
+    std::vector<std::string> words;
+    words.push_back(str);
+    //arr.push_back(str);
     for (std::string& symbol : symbols) {
-        str.find(symbol);
+        std::vector<std::string> temp;
+        //std::cout<<symbol<<"\n";
+        for (std::string& substr : words) {
+            if(str.find(symbol) != std::string::npos){
+                split(substr, temp, symbol, true, true);
+            } else {
+                temp.push_back(substr); // Keep unchanged if no symbol found
+            }
+        }
+        words = std::move(temp); // Replace help with the updated vector
+    }
+    std::cout<<"done\n";
+    arr.insert(arr.end(), words.begin(), words.end());
+    for (std::string& substr : arr) {
+        std::cout <<""<< substr <<"";
     }
 }
 
@@ -174,14 +193,20 @@ void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
 }
 
 void parse(std::string &str){
-    replace(str, "\n", " ");
-    std::cout << "str:" << str << std::endl;
     std::vector<std::string> statements;
+    std::vector<std::string> words;
+    replace(str, "\n", " ");
     split(str, statements, ";", true);
+    std::cout << "str:" << str << std::endl;
     //std::vector<Token> tokens;
     std::cout << "statements:\n";
     for (std::string& statement : statements) {
+        deconstructStatement(statement, words);
         std::cout << "|" << statement << "|" << std::endl;
+    }
+    std::cout << "words:\n";
+    for (std::string& word : words) {
+        std::cout << "" << word << "";
     }
 }
 
