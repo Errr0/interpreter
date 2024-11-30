@@ -40,8 +40,58 @@ enum TokenType {
     BACKSLASH,
     DOUBLESLASH,
     HASHTAG
+    // INCREMENT,   // ++
+    // DECREMENT,   // --
+    // ADD_ASSIGN,  // +=
+    // SUB_ASSIGN,  // -=
+    // MUL_ASSIGN,  // *=
+    // DIV_ASSIGN,  // /=
+    // MOD_ASSIGN,  // %=
 };
 
+std::string display(TokenType token) {
+    switch (token) {
+        case END: return "END";
+        case ASSIGN: return "ASSIGN";
+        case PLUS: return "PLUS";
+        case MINUS: return "MINUS";
+        case ASTERISK: return "ASTERISK";
+        case SLASH: return "SLASH";
+        case MODULO: return "MODULO";
+        case MULTIPLY: return "MULTIPLY";
+        case DIVIDE: return "DIVIDE";
+        case ADD: return "ADD";
+        case SUBTRACT: return "SUBTRACT";
+        case NOT: return "NOT";
+        case AND: return "AND";
+        case OR: return "OR";
+        case EQUAL: return "EQUAL";
+        case NOTEQUAL: return "NOTEQUAL";
+        case LESSTHAN: return "LESSTHAN";
+        case LESSEQUAL: return "LESSEQUAL";
+        case GREATERTHAN: return "GREATERTHAN";
+        case GREATEREQUAL: return "GREATEREQUAL";
+        case NUMBER: return "NUMBER";
+        case IDENTIFIER: return "IDENTIFIER";
+        case BRACKETOPEN: return "BRACKETOPEN";
+        case BRACKETCLOSE: return "BRACKETCLOSE";
+        case SQUAREBRACKETOPEN: return "SQUAREBRACKETOPEN";
+        case SQUAREBRACKETCLOSE: return "SQUAREBRACKETCLOSE";
+        case CURLYBRACKETOPEN: return "CURLYBRACKETOPEN";
+        case CURLYBRACKETCLOSE: return "CURLYBRACKETCLOSE";
+        case APOSTROPHE: return "APOSTROPHE";
+        case QUOTATION: return "QUOTATION";
+        case QUESTIONMARK: return "QUESTIONMARK";
+        case COMMA: return "COMMA";
+        case COLON: return "COLON";
+        case DOT: return "DOT";
+        case BACKSLASH: return "BACKSLASH";
+        case DOUBLESLASH: return "DOUBLESLASH";
+        case HASHTAG: return "HASHTAG";
+        default: return "UNKNOWN";
+    }
+}
+/*
 std::map<std::string, TokenType> map = {
     {";", END},
     {"=", ASSIGN},
@@ -77,6 +127,44 @@ std::map<std::string, TokenType> map = {
     {"\\", BACKSLASH},
     {"//", DOUBLESLASH},
     {"#", HASHTAG}
+};*/
+
+std::map<std::string, TokenType> locked = {
+    {"~END", END},
+    {"~ASSIGN", ASSIGN},
+    {"~PLUS", PLUS},
+    {"~MINUS", MINUS},
+    {"~ASTERISK", ASTERISK},
+    {"~SLASH", SLASH},
+    {"~MODULO", MODULO},
+    {"~ADD", ADD},
+    {"~SUBTRACT", SUBTRACT},
+    {"~MULTIPLY", MULTIPLY},
+    {"~DIVIDE", DIVIDE},
+    {"~NOT", NOT},
+    {"~AND", AND},
+    {"~OR", OR},
+    {"~EQUAL", EQUAL},
+    {"~NOTEQUAL", NOTEQUAL},
+    {"~LESSTHAN", LESSTHAN},
+    {"~LESSEQUAL", LESSEQUAL},
+    {"~GREATERTHAN", GREATERTHAN},
+    {"~GREATEREQUAL", GREATEREQUAL},
+    {"~BRACKETOPEN", BRACKETOPEN},
+    {"~BRACKETCLOSE", BRACKETCLOSE},
+    {"~SQUAREBRACKETOPEN", SQUAREBRACKETOPEN},
+    {"~SQUAREBRACKETCLOSE", SQUAREBRACKETCLOSE},
+    {"~CURLYBRACKETOPEN", CURLYBRACKETOPEN},
+    {"~CURLYBRACKETCLOSE", CURLYBRACKETCLOSE},
+    {"~APOSTROPHE", APOSTROPHE},
+    {"~QUOTATION", QUOTATION},
+    {"~QUESTIONMARK", QUESTIONMARK},
+    {"~COMMA", COMMA},
+    {"~COLON", COLON},
+    {"~DOT", DOT},
+    {"~BACKSLASH", BACKSLASH},
+    {"~DOUBLESLASH", DOUBLESLASH},
+    {"~HASHTAG", HASHTAG}
 };
 
 std::array<std::string, 33> symbols = {
@@ -119,94 +207,51 @@ class Token{
     public:
     std::string value;
     enum TokenType type;
-    Token(std::string value = ";",enum TokenType type = END){
+    Token(std::string value = "",enum TokenType type = END){
         this -> value = value;
         this -> type = type;
     }
 };
 
-bool splitChunks(std::string str, std::vector<std::string> &arr, int i) {
-    size_t start, end;
-    bool change = false;
-    std::vector<std::string> ignore;
-    for (std::string& s : symbols) {
-        start = 0;
-        end = str.find(s);
-        if(change){
-            break;
-        }
-        while (end < std::string::npos) {
-            if(start != end){
-                splitChunks(str.substr(start, end - start), arr, i+1);
-                arr.push_back(str.substr(end - start, s.length()));
-                change = true;
-            }
-            start = end + (s.length()>0 ? s.length() : 1);
-            end = str.find(s, start);
-            splitChunks(str.substr(start), arr, i+1);
-            break;
+void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
+    for (std::string str : arr) {
+        if(str[0]=='~'){
+            tokens.push_back(Token("",locked[str]));
+        } else if(isNumber(str)){
+            tokens.push_back(Token(str,NUMBER));
+        } else if(isIdentifier(str)){
+            tokens.push_back(Token(str,IDENTIFIER));
+        } else{
+            //std::cout <<" |no valid token: "<< str <<"| ";
         }
     }
-    if(!change && str != " " && str != ""){
-        arr.push_back(str);
-    }
-    return change;
 }
 
-void deconstructStatement(std::string &str, std::vector<std::string> &arr){
-    //arr.push_back(str);
-    //bool change = false;
+void deconstructStatement(std::string &str, std::vector<Token> &arr){
     std::vector<std::string> words;
-    words.push_back(str);
-    //arr.push_back(str);
+    split(str,words);
     for (std::string& symbol : symbols) {
         std::vector<std::string> temp;
-        //std::cout<<symbol<<"\n";
         for (std::string& substr : words) {
-            if(str.find(symbol) != std::string::npos){
-                split(substr, temp, symbol, true, true);
+            if(substr.find(symbol) != std::string::npos){
+                split(substr, temp, symbol, true, true, true);
             } else {
                 temp.push_back(substr); // Keep unchanged if no symbol found
             }
         }
         words = std::move(temp); // Replace help with the updated vector
     }
-    std::cout<<"done\n";
-    arr.insert(arr.end(), words.begin(), words.end());
-    for (std::string& substr : arr) {
-        std::cout <<""<< substr <<"";
-    }
+    tokenize(words, arr);
 }
 
-void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
-    for (std::string str : arr) {
-        if(isIdentifier(str)){
-            tokens.push_back(Token(str,IDENTIFIER));
-        } else if(isInt(str)){
-            tokens.push_back(Token(str,NUMBER));
-        } else if(str.length()<=2){
-            tokens.push_back(Token(str,map[str]));
-        } else{
-            std::cout <<" |no valid token: "<< str <<"| ";
-        }
-    }
-}
-
-void parse(std::string &str){
+void parse(std::string &str, std::vector<Token> &tokens){
     std::vector<std::string> statements;
-    std::vector<std::string> words;
     replace(str, "\n", " ");
-    split(str, statements, ";", true);
-    std::cout << "str:" << str << std::endl;
-    //std::vector<Token> tokens;
-    std::cout << "statements:\n";
+    split(str, statements, ";", true, true, true);
     for (std::string& statement : statements) {
-        deconstructStatement(statement, words);
-        std::cout << "|" << statement << "|" << std::endl;
-    }
-    std::cout << "words:\n";
-    for (std::string& word : words) {
-        std::cout << "" << word << "";
+        std::vector<std::string> splittedStatement;
+        split(statement,splittedStatement);
+        deconstructStatement(statement, tokens);
     }
 }
 

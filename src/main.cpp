@@ -8,7 +8,11 @@ int main(int argc, char* argv[]){
     }
     std::string code;
     if(!readfile(argv[1], code)) return 2;
-    parse(code);
+    std::vector<Token> tokens;
+    parse(code,tokens);
+    for (Token& token : tokens){
+        std::cout << display(token.type) << (token.value == "" ? "" : "=") << token.value <<", ";
+    }
     return 0;
 }
 

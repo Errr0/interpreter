@@ -1,19 +1,42 @@
 #include "include.cpp"
 
-void split(std::string str, std::vector<std::string> &arr, std::string symbol = " ", bool include = false, bool separate = false) {
-    size_t start = 0, end = str.find(symbol);//int with different name
-    while (end != std::string::npos) {
-        if(start != end){
-        arr.push_back(str.substr(start, (include ? (separate ? end - start : end - start + symbol.length()) : end - start)));
-        if(separate) arr.push_back(str.substr(end - start, symbol.length()));
-        //if(include)arr.push_back(str.substr());
-        }
-        start = end + (include ? symbol.length() : 1);
-        end = str.find(symbol, start);
-    }
-    if(str.substr(start) != " " && str.substr(start) != "")
-    arr.push_back(str.substr(start)); // Add the last word
-}
+std::map<std::string, std::string> lockSymbol = {
+    {";", "~END"},
+    {"=", "~ASSIGN"},
+    {"+", "~PLUS"},
+    {"-", "~MINUS"},
+    {"*", "~ASTERISK"},
+    {"/", "~SLASH"},
+    {"%", "~MODULO"},
+    {"+=", "~ADD"},
+    {"-=", "~SUBTRACT"},
+    {"*=", "~MULTIPLY"},
+    {"/=", "~DIVIDE"},
+    {"!", "~NOT"},
+    {"&&", "~AND"},
+    {"||", "~OR"},
+    {"==", "~EQUAL"},
+    {"!=", "~NOTEQUAL"},
+    {"<", "~LESSTHAN"},
+    {"<=", "~LESSEQUAL"},
+    {">", "~GREATERTHAN"},
+    {">=", "~GREATEREQUAL"},
+    {"(", "~BRACKETOPEN"},
+    {")", "~BRACKETCLOSE"},
+    {"[", "~SQUAREBRACKETOPEN"},
+    {"]", "~SQUAREBRACKETCLOSE"},
+    {"{", "~CURLYBRACKETOPEN"},
+    {"}", "~CURLYBRACKETCLOSE"},
+    {"'", "~APOSTROPHE"},
+    {"\"", "~QUOTATION"},
+    {"?", "~QUESTIONMARK"},
+    {",", "~COMMA"},
+    {":", "~COLON"},
+    {".", "~DOT"},
+    {"\\", "~BACKSLASH"},
+    {"//", "~DOUBLESLASH"},
+    {"#", "~HASHTAG"}
+};
 
 int numberOfOcurrences(std::string str, std::string substr){
     int count = 0;
@@ -23,7 +46,31 @@ int numberOfOcurrences(std::string str, std::string substr){
         start = end + 1;
         end = str.find(substr, start);
     }
+    //std::cout<<"|nr of ocur "<<substr<<" in "<<str<<" = "<<count<<"|";
     return count;
+}
+
+void split(std::string str, std::vector<std::string> &arr, std::string symbol = " ", bool include = false, bool separate = false, bool lock = false) {
+    if(str.substr(0,symbol.length()) == symbol && include){
+        arr.push_back((lock ? lockSymbol[symbol] : symbol));
+        if(numberOfOcurrences(str, symbol) == 1){
+        arr.push_back(str.substr(symbol.length()));
+        return;
+        }
+    }
+    size_t start = 0, end = str.find(symbol);//int with different name
+    while (end != std::string::npos) {
+        if(start != end){
+            arr.push_back(str.substr(start, (include && !separate ? end - start + symbol.length() : end - start)));
+            if(include && separate){
+                arr.push_back((lock ? lockSymbol[symbol] : symbol));
+            }
+        }
+        start = end + (include ? symbol.length() : 1);
+        end = str.find(symbol, start);
+    }
+    if(str.substr(start) != " " && str.substr(start) != "")
+    arr.push_back(str.substr(start)); // Add the last word
 }
 
 std::string merge(std::vector<std::string> &arr){
