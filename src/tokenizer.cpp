@@ -12,8 +12,13 @@ enum TokenType {
     MODULO,
     MULTIPLY,
     DIVIDE,
-    ADD,
-    SUBTRACT,
+    INCREMENT,   // ++
+    DECREMENT,   // --
+    ADDASSIGN,  // +=
+    SUBASSIGN,  // -=
+    MULASSIGN,  // *=
+    DIVASSIGN,  // /=
+    MODASSIGN,  // %=
     NOT,
     AND,
     OR,
@@ -40,13 +45,7 @@ enum TokenType {
     BACKSLASH,
     DOUBLESLASH,
     HASHTAG
-    // INCREMENT,   // ++
-    // DECREMENT,   // --
-    // ADD_ASSIGN,  // +=
-    // SUB_ASSIGN,  // -=
-    // MUL_ASSIGN,  // *=
-    // DIV_ASSIGN,  // /=
-    // MOD_ASSIGN,  // %=
+    
 };
 
 std::string display(TokenType token) {
@@ -60,8 +59,13 @@ std::string display(TokenType token) {
         case MODULO: return "MODULO";
         case MULTIPLY: return "MULTIPLY";
         case DIVIDE: return "DIVIDE";
-        case ADD: return "ADD";
-        case SUBTRACT: return "SUBTRACT";
+        case INCREMENT: return "INCREMENT";
+        case DECREMENT: return "DECREMENT";
+        case ADDASSIGN: return "ADDASSIGN";
+        case SUBASSIGN: return "SUBASSIGN";
+        case MULASSIGN: return "MULASSIGN";
+        case DIVASSIGN: return "DIVASSIGN";
+        case MODASSIGN: return "MODASSIGN";
         case NOT: return "NOT";
         case AND: return "AND";
         case OR: return "OR";
@@ -137,8 +141,8 @@ std::map<std::string, TokenType> locked = {
     {"~ASTERISK", ASTERISK},
     {"~SLASH", SLASH},
     {"~MODULO", MODULO},
-    {"~ADD", ADD},
-    {"~SUBTRACT", SUBTRACT},
+    {"~ADDASSIGN", ADDASSIGN},
+    {"~SUBASSIGN", SUBASSIGN},
     {"~MULTIPLY", MULTIPLY},
     {"~DIVIDE", DIVIDE},
     {"~NOT", NOT},
