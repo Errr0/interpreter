@@ -51,16 +51,9 @@ int numberOfOcurrences(std::string str, std::string substr){
 }
 
 void split(std::string str, std::vector<std::string> &arr, std::string symbol = " ", bool include = false, bool separate = false, bool lock = false) {
-    if(str.substr(0,symbol.length()) == symbol && include){
-        arr.push_back((lock ? lockSymbol[symbol] : symbol));
-        if(numberOfOcurrences(str, symbol) == 1){
-        arr.push_back(str.substr(symbol.length()));
-        return;
-        }
-    }
     size_t start = 0, end = str.find(symbol);//int with different name
     while (end != std::string::npos) {
-        if(start != end){
+        if(start != end || (start==end && str.substr(start, symbol.length()) == symbol)){
             arr.push_back(str.substr(start, (include && !separate ? end - start + symbol.length() : end - start)));
             if(include && separate){
                 arr.push_back((lock ? lockSymbol[symbol] : symbol));

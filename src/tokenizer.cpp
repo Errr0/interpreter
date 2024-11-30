@@ -167,12 +167,12 @@ std::map<std::string, TokenType> locked = {
     {"~HASHTAG", HASHTAG}
 };
 
-std::array<std::string, 33> symbols = {
+std::array<std::string, 34> symbols = {
     "==",
     "!=",
     "<=",
     ">=",
-    "&&"
+    "&&",
     "||",
     "+=",
     "-=",
