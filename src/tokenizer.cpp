@@ -95,43 +95,6 @@ std::string display(TokenType token) {
         default: return "UNKNOWN";
     }
 }
-/*
-std::map<std::string, TokenType> map = {
-    {";", END},
-    {"=", ASSIGN},
-    {"+", PLUS},
-    {"-", MINUS},
-    {"*", ASTERISK},
-    {"/", SLASH},
-    {"%", MODULO},
-    {"+=", ADD},
-    {"-=", SUBTRACT},
-    {"*=", MULTIPLY},
-    {"/=", DIVIDE},
-    {"!", NOT},
-    {"&&", AND},
-    {"||", OR},
-    {"==", EQUAL},
-    {"!=", NOTEQUAL},
-    {"<", LESSTHAN},
-    {"<=", LESSEQUAL},
-    {">", GREATERTHAN},
-    {"(", BRACKETOPEN},
-    {")", BRACKETCLOSE},
-    {"[", SQUAREBRACKETOPEN},
-    {"]", SQUAREBRACKETCLOSE},
-    {"{", CURLYBRACKETOPEN},
-    {"}", CURLYBRACKETCLOSE},
-    {"'", APOSTROPHE},
-    {"\"", QUOTATION},
-    {"?", QUESTIONMARK},
-    {",", COMMA},
-    {":", COLON},
-    {".", DOT},
-    {"\\", BACKSLASH},
-    {"//", DOUBLESLASH},
-    {"#", HASHTAG}
-};*/
 
 std::map<std::string, TokenType> locked = {
     {"~END", END},
@@ -141,8 +104,13 @@ std::map<std::string, TokenType> locked = {
     {"~ASTERISK", ASTERISK},
     {"~SLASH", SLASH},
     {"~MODULO", MODULO},
+    {"~INCREMENT", INCREMENT},
+    {"~DECREMENT", DECREMENT},
     {"~ADDASSIGN", ADDASSIGN},
     {"~SUBASSIGN", SUBASSIGN},
+    {"~MULASSIGN", MULASSIGN},
+    {"~DIVASSIGN", DIVASSIGN},
+    {"~MODASSIGN", MODASSIGN},
     {"~MULTIPLY", MULTIPLY},
     {"~DIVIDE", DIVIDE},
     {"~NOT", NOT},
