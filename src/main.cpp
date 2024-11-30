@@ -13,6 +13,7 @@ int main(int argc, char* argv[]){
     for (Token& token : tokens){
         std::cout << display(token.type) << (token.value == "" ? "" : "=") << token.value <<", ";
     }
+    //interpret
     return 0;
 }
 

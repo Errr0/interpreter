@@ -15,8 +15,6 @@ std::map<std::string, std::string> lockSymbol = {
     {"*=", "~MULASSIGN"},
     {"/=", "~DIVASSIGN"},
     {"%=", "~MODASSIGN"},
-    {"*=", "~MULTIPLY"},
-    {"/=", "~DIVIDE"},
     {"!", "~NOT"},
     {"&&", "~AND"},
     {"||", "~OR"},

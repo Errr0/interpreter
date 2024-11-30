@@ -10,8 +10,6 @@ enum TokenType {
     ASTERISK,
     SLASH,
     MODULO,
-    MULTIPLY,
-    DIVIDE,
     INCREMENT,   // ++
     DECREMENT,   // --
     ADDASSIGN,  // +=
@@ -57,8 +55,6 @@ std::string display(TokenType token) {
         case ASTERISK: return "ASTERISK";
         case SLASH: return "SLASH";
         case MODULO: return "MODULO";
-        case MULTIPLY: return "MULTIPLY";
-        case DIVIDE: return "DIVIDE";
         case INCREMENT: return "INCREMENT";
         case DECREMENT: return "DECREMENT";
         case ADDASSIGN: return "ADDASSIGN";
@@ -111,8 +107,6 @@ std::map<std::string, TokenType> locked = {
     {"~MULASSIGN", MULASSIGN},
     {"~DIVASSIGN", DIVASSIGN},
     {"~MODASSIGN", MODASSIGN},
-    {"~MULTIPLY", MULTIPLY},
-    {"~DIVIDE", DIVIDE},
     {"~NOT", NOT},
     {"~AND", AND},
     {"~OR", OR},
@@ -139,17 +133,20 @@ std::map<std::string, TokenType> locked = {
     {"~HASHTAG", HASHTAG}
 };
 
-std::array<std::string, 34> symbols = {
+std::array<std::string, 37> symbols = {
     "==",
     "!=",
     "<=",
     ">=",
     "&&",
     "||",
+    "++",
+    "--",
     "+=",
     "-=",
     "*=",
     "/=",
+    "%=",
     "//",
     "=",
     "+",
