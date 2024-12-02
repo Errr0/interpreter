@@ -42,7 +42,8 @@ enum TokenType {
     DOT,
     BACKSLASH,
     DOUBLESLASH,
-    HASHTAG
+    HASHTAG,
+    SPACE
     
 };
 
@@ -88,6 +89,7 @@ std::string display(TokenType token) {
         case BACKSLASH: return "BACKSLASH";
         case DOUBLESLASH: return "DOUBLESLASH";
         case HASHTAG: return "HASHTAG";
+        case SPACE: return "SPACE";
         default: return "UNKNOWN";
     }
 }
@@ -130,7 +132,8 @@ std::map<std::string, TokenType> locked = {
     {"~DOT", DOT},
     {"~BACKSLASH", BACKSLASH},
     {"~DOUBLESLASH", DOUBLESLASH},
-    {"~HASHTAG", HASHTAG}
+    {"~HASHTAG", HASHTAG},
+    {"~SPACE", SPACE}
 };
 
 std::array<std::string, 37> symbols = {
@@ -148,6 +151,7 @@ std::array<std::string, 37> symbols = {
     "/=",
     "%=",
     "//",
+    " ",
     "=",
     "+",
     "*",
