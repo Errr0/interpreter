@@ -1,5 +1,31 @@
 #include "include.cpp"
 
+std::set<std::string> keywords = {
+    "include",
+    "return",
+    "int",
+    "float",
+    "char",
+    "bool",
+    "void",
+    "if",
+    "else",
+    "switch",
+    "case",
+    "for",
+    "while",
+    "do",
+    "break",
+    "continue",
+    "struct",
+    "class",
+    "public",
+    "private",
+    "protected",
+    "const",
+    "new",
+    "delete",
+    };
 bool isInt(std::string str){
     std::regex regex ("[-]?[0-9]+");
     return std::regex_match(str, regex);
@@ -23,4 +49,8 @@ bool isIdentifier(std::string str) {
 bool isChar(std::string str) {
     std::regex regex ("[a-zA-Z]");
     return std::regex_match(str, regex);
+}
+
+bool isKeyword(std::string str) {
+    return (keywords.find(str)!=keywords.end());
 }

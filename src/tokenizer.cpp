@@ -27,7 +27,10 @@ enum TokenType {
     GREATERTHAN,
     GREATEREQUAL,
     NUMBER,
+    INT,
+    FLOAT,
     IDENTIFIER,
+    KEYWORD,
     BRACKETOPEN,
     BRACKETCLOSE,
     SQUAREBRACKETOPEN,
@@ -47,7 +50,7 @@ enum TokenType {
     
 };
 
-std::string display(TokenType token) {
+std::string displayTokenType(TokenType token) {
     switch (token) {
         case END: return "END";
         case ASSIGN: return "ASSIGN";
@@ -94,6 +97,57 @@ std::string display(TokenType token) {
     }
 }
 
+std::string display(TokenType token) {
+    switch (token) {
+        case END: return ";";
+        case ASSIGN: return "=";
+        case PLUS: return "+";
+        case MINUS: return "-";
+        case ASTERISK: return "*";
+        case SLASH: return "/";
+        case MODULO: return "%";
+        case INCREMENT: return "++";
+        case DECREMENT: return "--";
+        case ADDASSIGN: return "+=";
+        case SUBASSIGN: return "-=";
+        case MULASSIGN: return "*=";
+        case DIVASSIGN: return "/=";
+        case MODASSIGN: return "%=";
+        case NOT: return "!";
+        case AND: return "&&";
+        case OR: return "||";
+        case EQUAL: return "==";
+        case NOTEQUAL: return "!=";
+        case LESSTHAN: return "<";
+        case LESSEQUAL: return "<=";
+        case GREATERTHAN: return ">";
+        case GREATEREQUAL: return ">=";
+        case NUMBER: return "number";
+        case IDENTIFIER: return "identifier";
+        case INT: return "int";
+        case FLOAT: return "float";
+        case KEYWORD: return "keyword";
+        case BRACKETOPEN: return "(";
+        case BRACKETCLOSE: return ")";
+        case SQUAREBRACKETOPEN: return "[";
+        case SQUAREBRACKETCLOSE: return "]";
+        case CURLYBRACKETOPEN: return "{";
+        case CURLYBRACKETCLOSE: return "}";
+        case APOSTROPHE: return "'";
+        case QUOTATION: return "\"";
+        case QUESTIONMARK: return "?";
+        case COMMA: return ",";
+        case COLON: return ":";
+        case DOT: return ".";
+        case BACKSLASH: return "\\";
+        case DOUBLESLASH: return "//";
+        case HASHTAG: return "#";
+        case SPACE: return " ";
+        default: return "UNKNOWN";
+    }
+}
+
+
 std::map<std::string, TokenType> locked = {
     {"~END", END},
     {"~ASSIGN", ASSIGN},
@@ -136,7 +190,7 @@ std::map<std::string, TokenType> locked = {
     {"~SPACE", SPACE}
 };
 
-std::array<std::string, 37> symbols = {
+std::array<std::string, 39> symbols = {
     "==",
     "!=",
     "<=",
@@ -151,6 +205,7 @@ std::array<std::string, 37> symbols = {
     "/=",
     "%=",
     "//",
+    ";",
     " ",
     "=",
     "+",
@@ -180,20 +235,61 @@ class Token{
     public:
     std::string value;
     enum TokenType type;
-    Token(std::string value = "",enum TokenType type = END){
+    Token(std::string value = ";",enum TokenType type = END){
         this -> value = value;
         this -> type = type;
     }
 };
 
+void addSpaceToken(std::vector<Token> &tokens){
+    if(!tokens.empty()){
+        if(tokens.back().type == SPACE){
+            return;
+        }
+    }
+    tokens.push_back(Token("",SPACE));
+}
+
+void addNumberToken(std::string str, std::vector<Token> &tokens){
+    if(tokens.size()>=2){
+        if(tokens[tokens.size() - 1].type == DOT && (tokens[tokens.size() - 2].type == NUMBER || tokens[tokens.size() - 2].type == INT)){
+            tokens.pop_back();
+            std::string temp = tokens.back().value;
+            tokens.pop_back();
+            if(!tokens.empty()){
+                if(tokens.back().type == MINUS){
+                    tokens.pop_back();
+                    tokens.push_back(Token("-"+temp+"."+str,FLOAT));
+            return;
+                }
+            }
+            tokens.push_back(Token(temp+"."+str,FLOAT));
+            return;
+        }
+    }
+    if(tokens.back().type == MINUS){
+        tokens.pop_back();
+        tokens.push_back(Token("-"+str,INT));
+    }
+    tokens.push_back(Token(str,INT));
+}
+
 void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
     for (std::string str : arr) {
         if(str[0]=='~'){
-            tokens.push_back(Token("",locked[str]));
+            if(str=="~SPACE"){
+                addSpaceToken(tokens);
+            } else{
+                tokens.push_back(Token("",locked[str]));
+            }
         } else if(isNumber(str)){
-            tokens.push_back(Token(str,NUMBER));
+            addNumberToken(str, tokens);
         } else if(isIdentifier(str)){
-            tokens.push_back(Token(str,IDENTIFIER));
+            if(isKeyword(str)){
+                tokens.push_back(Token(str,KEYWORD));
+            } else {
+                tokens.push_back(Token(str,IDENTIFIER));
+            }
         } else{
             //std::cout <<" |no valid token: "<< str <<"| ";
         }

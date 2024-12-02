@@ -11,7 +11,11 @@ int main(int argc, char* argv[]){
     std::vector<Token> tokens;
     parse(code,tokens);
     for (Token& token : tokens){
-        std::cout << display(token.type) << (token.value == "" ? "" : "=") << token.value <<", ";
+        if(token.type == IDENTIFIER || token.type == NUMBER || token.type == INT || token.type == FLOAT || token.type == KEYWORD){
+            std::cout <<token.value << "("<< display(token.type) <<")";
+        } else{
+            std::cout << display(token.type);
+        }
     }
     //interpret
     return 0;

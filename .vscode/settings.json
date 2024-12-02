@@ -57,6 +57,7 @@
         "regex": "cpp",
         "map": "cpp",
         "array": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "set": "cpp"
     }
 }

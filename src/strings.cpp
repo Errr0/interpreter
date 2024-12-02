@@ -54,7 +54,7 @@ int numberOfOcurrences(std::string str, std::string substr){
     return count;
 }
 
-void split(std::string str, std::vector<std::string> &arr, std::string symbol = " ", bool include = false, bool separate = false, bool lock = false) {
+void split(std::string str, std::vector<std::string> &arr, std::string symbol = " ", bool include = true, bool separate = true, bool lock = true) {
     size_t start = 0, end = str.find(symbol);//int with different name
     while (end != std::string::npos) {
         if(start != end || (start==end && str.substr(start, symbol.length()) == symbol)){
