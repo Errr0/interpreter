@@ -38,7 +38,8 @@ std::map<std::string, std::string> lockSymbol = {
     {".", "~DOT"},
     {"\\", "~BACKSLASH"},
     {"//", "~DOUBLESLASH"},
-    {"#", "~HASHTAG"}
+    {"#", "~HASHTAG"},
+    {" ", "~SPACE"}
 };
 
 int numberOfOcurrences(std::string str, std::string substr){
