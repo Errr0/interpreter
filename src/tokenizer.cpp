@@ -146,7 +146,7 @@ std::string display(TokenType token) {
         case DOUBLESLASH: return "//";
         case HASHTAG: return "#";
         case SPACE: return " ";
-        case SCOPE: return "s";
+        case SCOPE: return "SCOPE";
         default: return "UNKNOWN";
     }
 }
@@ -288,17 +288,20 @@ void addKeyword(std::string str, std::vector<Token> &tokens){
     }
 }
 
+long long unsigned int scope = 0;
+
 void tokenize(std::vector<std::string> arr, std::vector<std::vector<Token>> &tokens){
     //std::vector<Token> tokens;
     std::vector<std::vector<Token>> scopes;
     scopes.push_back(std::vector<Token>());
-    long long unsigned int scope = 0;
     for (long long unsigned int i = 0; i<arr.size(); i++) {
+        if(scope<0){std::cout<<scope<<" NEGATIVE SCOPE\n";}else
         if(arr[i][0]=='~'){
             if(arr[i]=="~SPACE"){
                 addSpaceToken(scopes[scope]);
             } else if(arr[i]=="~BRACKETOPEN" || arr[i]=="~CURLYBRACKETOPEN"){
-                if(++scope>scopes.size()-1){
+                scope++;
+                if(scope>=scopes.size()){
                     //std::cout<<scope<<" add\n";
                     scopes.push_back({});
                 }
@@ -322,14 +325,17 @@ void tokenize(std::vector<std::string> arr, std::vector<std::vector<Token>> &tok
             //std::cout <<" |no valid token: "<< arr[i] <<"| ";
         }
     }
-    // std::cout<<scopes.size()<<"\n";
-    // for(std::vector<Token> s : scopes){
-    //     std::cout<<scopes.size()<<"sub\n";
-    //     for(Token t : s){
-    //         std::cout<<display(t.type)<<"\n";
-    //     }
-    // }
-    tokens.insert(tokens.end(), scopes.begin(), scopes.end()); 
+    //std::cout<<"`"<<scopes.size()<<"`";
+    //for(std::vector<Token> s : scopes){
+        //std::cout<<"``"<<s.size()<<"``";
+        //for(Token t : s){
+        //    std::cout<<display(t.type)<<"";
+        //}
+    //}
+    //std::cout<<"\n1`"<<tokens.size()<<"`";
+    tokens.insert(tokens.end(), scopes.begin(), scopes.end());
+    //std::cout<<"2`"<<tokens.size()<<"`";
+    
 }
 
 void deconstructStatement(std::string &str, std::vector<std::vector<Token>> &arr){
@@ -349,6 +355,27 @@ void deconstructStatement(std::string &str, std::vector<std::vector<Token>> &arr
     tokenize(words, arr);
 }
 
+void print(std::vector<std::vector<Token>> &tokens){
+    std::cout << "|SCOPES = "<< tokens.size() <<"|\n";
+    for(std::vector<Token> s : tokens){
+    std::cout << "|SCOPE|";
+        for(Token token : s){
+            
+            if(token.type == SCOPE){
+                std::cout <<token.value << "-"<< display(token.type) <<"";
+            }else
+            if(token.type == IDENTIFIER || token.type == NUMBER || token.type == INT || token.type == FLOAT || token.type == KEYWORD || token.type == DATATYPE){
+                std::cout <<token.value;// << "("<< display(token.type) <<")";
+            } else{
+                std::cout << display(token.type);
+            }
+            
+            //std::cout<<display(t.type)<<"";
+        }
+        std::cout << "|\n";
+        }
+}
+
 void parse(std::string &str, std::vector<std::vector<Token>> &tokens){
     std::vector<std::string> statements;
     replace(str, "\n", " ");
@@ -356,10 +383,9 @@ void parse(std::string &str, std::vector<std::vector<Token>> &tokens){
     for (std::string& statement : statements) {
         //std::vector<Token> statementTokens;
         deconstructStatement(statement, tokens);
-        // if(!statementTokens.empty()){
-        //     tokens.push_back(statementTokens);
-        // }
+        print(tokens);
     }
+    print(tokens);
 }
 
 bool readfile(std::string filename, std::string &str){
