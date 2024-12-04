@@ -58,6 +58,10 @@
         "map": "cpp",
         "array": "cpp",
         "xtree": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "stack": "cpp",
+        "deque": "cpp",
+        "ranges": "cpp",
+        "span": "cpp"
     }
 }
