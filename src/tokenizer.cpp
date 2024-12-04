@@ -31,6 +31,7 @@ enum TokenType {
     FLOAT,
     IDENTIFIER,
     KEYWORD,
+    DATATYPE,
     BRACKETOPEN,
     BRACKETCLOSE,
     SQUAREBRACKETOPEN,
@@ -46,7 +47,8 @@ enum TokenType {
     BACKSLASH,
     DOUBLESLASH,
     HASHTAG,
-    SPACE
+    SPACE,
+    SCOPE
     
 };
 
@@ -122,11 +124,12 @@ std::string display(TokenType token) {
         case LESSEQUAL: return "<=";
         case GREATERTHAN: return ">";
         case GREATEREQUAL: return ">=";
-        case NUMBER: return "number";
-        case IDENTIFIER: return "identifier";
-        case INT: return "int";
-        case FLOAT: return "float";
-        case KEYWORD: return "keyword";
+        //case NUMBER: return "n";
+        case IDENTIFIER: return "id";
+        case INT: return "i";
+        case FLOAT: return "f";
+        case KEYWORD: return "kw";
+        case DATATYPE: return "dt";
         case BRACKETOPEN: return "(";
         case BRACKETCLOSE: return ")";
         case SQUAREBRACKETOPEN: return "[";
@@ -143,6 +146,7 @@ std::string display(TokenType token) {
         case DOUBLESLASH: return "//";
         case HASHTAG: return "#";
         case SPACE: return " ";
+        case SCOPE: return "s";
         default: return "UNKNOWN";
     }
 }
@@ -234,10 +238,12 @@ std::array<std::string, 39> symbols = {
 class Token{
     public:
     std::string value;
+    std::string target;
     enum TokenType type;
-    Token(std::string value = ";",enum TokenType type = END){
+    Token(std::string value = ";",enum TokenType type = END, std::string targert = ""){
         this -> value = value;
         this -> type = type;
+        this -> target = target;
     }
 };
 
@@ -274,29 +280,59 @@ void addNumberToken(std::string str, std::vector<Token> &tokens){
     tokens.push_back(Token(str,INT));
 }
 
-void tokenize(std::vector<std::string> arr, std::vector<Token> &tokens){
-    for (std::string str : arr) {
-        if(str[0]=='~'){
-            if(str=="~SPACE"){
-                addSpaceToken(tokens);
-            } else{
-                tokens.push_back(Token("",locked[str]));
-            }
-        } else if(isNumber(str)){
-            addNumberToken(str, tokens);
-        } else if(isIdentifier(str)){
-            if(isKeyword(str)){
-                tokens.push_back(Token(str,KEYWORD));
-            } else {
-                tokens.push_back(Token(str,IDENTIFIER));
-            }
-        } else{
-            //std::cout <<" |no valid token: "<< str <<"| ";
-        }
+void addKeyword(std::string str, std::vector<Token> &tokens){
+    if(dataTypes.find(str) != dataTypes.end()){
+        tokens.push_back(Token(str,DATATYPE));
+    } else {
+        tokens.push_back(Token(str,KEYWORD));
     }
 }
 
-void deconstructStatement(std::string &str, std::vector<Token> &arr){
+void tokenize(std::vector<std::string> arr, std::vector<std::vector<Token>> &tokens){
+    //std::vector<Token> tokens;
+    std::vector<std::vector<Token>> scopes;
+    scopes.push_back(std::vector<Token>());
+    long long unsigned int scope = 0;
+    for (long long unsigned int i = 0; i<arr.size(); i++) {
+        if(arr[i][0]=='~'){
+            if(arr[i]=="~SPACE"){
+                addSpaceToken(scopes[scope]);
+            } else if(arr[i]=="~BRACKETOPEN" || arr[i]=="~CURLYBRACKETOPEN"){
+                if(++scope>scopes.size()-1){
+                    //std::cout<<scope<<" add\n";
+                    scopes.push_back({});
+                }
+                
+                scopes[scope].push_back(Token(std::to_string(scope),SCOPE));
+            } else if(arr[i]=="~BRACKETCLOSE" || arr[i]=="~CURLYBRACKETCLOSE"){
+                scope -= 1;
+                scopes[scope].push_back(Token(std::to_string(scope),SCOPE));
+            } else{
+                scopes[scope].push_back(Token("",locked[arr[i]]));
+            }
+        } else if(isNumber(arr[i])){
+            addNumberToken(arr[i], scopes[scope]);
+        } else if(isIdentifier(arr[i])){
+            if(isKeyword(arr[i])){
+                addKeyword(arr[i], scopes[scope]);
+            } else {
+                scopes[scope].push_back(Token(arr[i],IDENTIFIER));
+            }
+        } else{
+            //std::cout <<" |no valid token: "<< arr[i] <<"| ";
+        }
+    }
+    // std::cout<<scopes.size()<<"\n";
+    // for(std::vector<Token> s : scopes){
+    //     std::cout<<scopes.size()<<"sub\n";
+    //     for(Token t : s){
+    //         std::cout<<display(t.type)<<"\n";
+    //     }
+    // }
+    tokens.insert(tokens.end(), scopes.begin(), scopes.end()); 
+}
+
+void deconstructStatement(std::string &str, std::vector<std::vector<Token>> &arr){
     std::vector<std::string> words;
     split(str,words);
     for (std::string& symbol : symbols) {
@@ -313,135 +349,16 @@ void deconstructStatement(std::string &str, std::vector<Token> &arr){
     tokenize(words, arr);
 }
 
-
-std::string interpret(std::vector<Token> &tokens){
-    Token temp;
-    while(!tokens.empty()){
-        switch(tokens[0].type) {
-        case END:
-            return;
-            break;
-        //case NUMBER:
-            //break;
-        case INT:
-            break;
-        case FLOAT:
-            break;
-        case IDENTIFIER:
-            break;
-        case KEYWORD:
-            if(tokens[0].value == "include"){
-
-            } else if(dataTypes.find(tokens[0].value) != dataTypes.end()){
-                if(tokens[1].type == IDENTIFIER){
-
-                } else if(tokens[1].type == BRACKETOPEN){
-                    
-                } else{
-                    return "type";
-                }
-            } else if(tokens[0].value == ""){
-
-            } else if(tokens[0].value == ""){
-                
-            } else if(tokens[0].value == ""){
-                
-            } else if(tokens[0].value == ""){
-                
-            }
-            break;
-        case ASSIGN:
-            break;
-        case PLUS:
-            break;
-        case MINUS:
-            break;
-        case ASTERISK:
-            break;
-        case SLASH:
-            break;
-        case MODULO:
-            break;
-        case INCREMENT:
-            break;
-        case DECREMENT:
-            break;
-        case ADDASSIGN:
-            break;
-        case SUBASSIGN:
-            break;
-        case MULASSIGN:
-            break;
-        case DIVASSIGN:
-            break;
-        case MODASSIGN:
-            break;
-        case NOT:
-            break;
-        case AND:
-            break;
-        case OR:
-            break;
-        case EQUAL:
-            break;
-        case NOTEQUAL:
-            break;
-        case LESSTHAN:
-            break;
-        case LESSEQUAL:
-            break;
-        case GREATERTHAN:
-            break;
-        case GREATEREQUAL:
-            break;
-        case BRACKETOPEN:
-            break;
-        case BRACKETCLOSE:
-            break;
-        case SQUAREBRACKETOPEN:
-            break;
-        case SQUAREBRACKETCLOSE:
-            break;
-        case CURLYBRACKETOPEN:
-            break;
-        case CURLYBRACKETCLOSE:
-            break;
-        case APOSTROPHE:
-            break;
-        case QUOTATION:
-            break;
-        case QUESTIONMARK:
-            break;
-        case COMMA:
-            break;
-        case COLON:
-            break;
-        case DOT:
-            break;
-        case BACKSLASH:
-            break;
-        case DOUBLESLASH:
-            break;
-        case HASHTAG:
-            break;
-        case SPACE:
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-
-void parse(std::string &str, std::vector<Token> &tokens){
+void parse(std::string &str, std::vector<std::vector<Token>> &tokens){
     std::vector<std::string> statements;
     replace(str, "\n", " ");
-    split(str, statements, ";", true, true, true);
+    split(str, statements, ";", false, false, false);//, false, false, false
     for (std::string& statement : statements) {
-        std::vector<std::string> splittedStatement;
-        split(statement,splittedStatement);
+        //std::vector<Token> statementTokens;
         deconstructStatement(statement, tokens);
-        interpret(tokens);
+        // if(!statementTokens.empty()){
+        //     tokens.push_back(statementTokens);
+        // }
     }
 }
 
